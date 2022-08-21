@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+
+    <style type="text/css">
+        .tg {
+            border-collapse: separate;
+            border-spacing: 1px;
+            border-color: #ccc;
+        }
+
+        .tg td {
+            font-family: Courier, sans-serif;
+            font-size: 14px;
+            padding: 6px 3px;
+            border-style: inset;
+            border-width: 1px;
+            overflow: hidden;
+            word-break: normal;
+            border-color: #ccc;
+            color: #333;
+            background-color: #fff;
+            height: auto;
+            vertical-align: middle;
+            align-content: center;
+            text-align: center;
+
+        }
+
+        .tg th {
+            font-family: Courier, sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            padding: 6px 3px;
+            border-style: inset;
+            border-width: 1px;
+            overflow: hidden;
+            word-break: normal;
+            border-color: #ccc;
+            color: #333;
+            background-color: #f0f0f0;
+            height: auto;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .tg .tg-4eph {
+            background-color: #f9f9f9;
+        }
+
+        ul {
+            padding: 5px;
+            margin-left: 10px;
+            height: auto;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div th:switch="${users}">
+    <h2 th:case="null">No users found!</h2>
+    <div th:case="*">
+        <h2>Admin</h2>
+        <table class="tg">
+            <thead>
+            <tr>
+                <th width="40">id</th>
+                <th width="120">user name</th>
+                <th width="120">password</th>
+                <th width="120">age</th>
+                <th width="120">email</th>
+                <th width="120">roles</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr th:each="user : ${users}">
+                <td th:text="${user.getId()}"></td>
+                <td th:text="${user.getUsername()}"></td>
+                <td th:text="${user.getPassword()}"></td>
+                <td th:text="${user.getAge()}"></td>
+                <td th:text="${user.getEmail()}"></td>
+
+                <td>
+                    <th:block th:each="msg : ${user.getRoles()}">
+                        <ul type="square">
+                            <li th:text="${msg.getAuthority()}"></li>
+                        </ul>
+                    </th:block>
+
+                </td>
+                <td><a th:href="@{/admin/{id}(id=${user.id})}">User Info</a></td>
+                <td><a th:href="@{/admin/{id}/edit/(id=${user.getId()})}">Edit</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <form th:action="@{/admin/new}" method="get">
+        <input type="submit" value="Create user"/>
+    </form>
+    <br>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Logout"/>
+    </form>
+</div>
+</body>
+</html>
