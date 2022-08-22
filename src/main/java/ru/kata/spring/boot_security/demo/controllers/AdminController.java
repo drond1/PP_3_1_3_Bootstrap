@@ -27,13 +27,13 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model) {
+    public String showUser(@PathVariable("id") int id, Model model) {
         model.addAttribute("user", userService.showOneUser(id));
         return "users/showUser";
     }
 
     @GetMapping("/new")
-    public String newUser(Model model) {
+    public String createNewUser(Model model) {
         User user = new User();
         model.addAttribute("user", user);
         model.addAttribute("roles", userService.getAllRoles());
@@ -41,35 +41,35 @@ public class AdminController {
     }
 
     @PostMapping("/new")
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam(value = "role") String role) {
+    public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam(value = "role") String role) {
         if (bindingResult.hasErrors()) {
             return "users/newUser";
         }
         user.setRoles(userService.findRolesByName(role));
-        userService.save(user);
+        userService.saveUser(user);
         return "redirect:/admin";
     }
 
     @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
+    public String editUser(Model model, @PathVariable("id") int id) {
         model.addAttribute("user", userService.showOneUser(id));
         model.addAttribute("roles", userService.getAllRoles());
         return "users/editUser";
     }
 
     @PostMapping("/{id}/edit")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") int id, @RequestParam(value = "role") String role) {
+    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") int id, @RequestParam(value = "role") String role) {
         if (bindingResult.hasErrors()) {
             return "users/editUser";
         }
         user.setRoles(userService.findRolesByName(role));
-        userService.update(id, user);
+        userService.updateUser(id, user);
         return "redirect:/admin";
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-        userService.delete(id);
+    public String deleteUser(@PathVariable("id") int id) {
+        userService.deleteUser(id);
         return "redirect:/admin";
 
     }

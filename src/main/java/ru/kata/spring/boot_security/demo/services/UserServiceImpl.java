@@ -1,9 +1,9 @@
 package ru.kata.spring.boot_security.demo.services;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.Role;
@@ -17,16 +17,15 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class UserServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     public final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder bCryptPasswordEncoder;
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, @Lazy BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> showAllUsers() {
@@ -36,6 +35,7 @@ public class UserServiceImpl implements UserDetailsService {
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
+
     public List<Role> findRolesByName(String roleName) {
         List<Role> roles = new ArrayList<>();
         for (Role role : getAllRoles()) {
@@ -49,26 +49,29 @@ public class UserServiceImpl implements UserDetailsService {
         Optional<User> foundUser = userRepository.findById(id);
         return foundUser.orElse(null);
     }
+
     @Transactional
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Transactional
-    public void save(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    public void saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Transactional
-    public void update(int id, User updatedUser) {
+    public void updateUser(int id, User updatedUser) {
         updatedUser.setId(id);
         userRepository.save(updatedUser);
     }
+
     @Transactional
-    public void delete(int id) {
+    public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
@@ -77,4 +80,5 @@ public class UserServiceImpl implements UserDetailsService {
         }
         return user;
     }
+
 }
