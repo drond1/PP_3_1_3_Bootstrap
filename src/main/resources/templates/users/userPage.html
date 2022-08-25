@@ -1,50 +1,84 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <style>
-        table {
-            width: 40%;
-            background: white;
-            color: rgba(8, 20, 59, 1);
-            border-spacing: 1px;
-        }
-        td, th {
-            background: white;
-            padding: 5px;
-            vertical-align: middle;
-            text-align: center;
-            align-content: center;
-        }
-        h1 {
-            color: black;
-        }
 
-    </style>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>User information page</title>
 </head>
 <body>
-<br>
-<h1>User Info Page</h1>
-<table border="1">
-    <tr>
-        <th>Id</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Email</th>
-    </tr>
-    <tbody>
-    <tr>
-        <td th:utext="${user.getId()}"></td>
-        <td th:utext="${user.getUsername()}"></td>
-        <td th:utext="${user.getAge()}"></td>
-        <td th:utext="${user.getEmail()}"></td>
-    </tr>
-    </tbody>
-</table>
-<br>
-<form th:action="@{/logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
+<div class="container-fluid">
+    <div class="row">
+        <!--    Заголовок-->
+        <div class="col-sm-12 p-2 bg-dark text-white ">
+            <a class="font-weight-bold text-white" th:text="${user.getEmail()}">Email </a>
+            <a> with roles:</a>
+            <a th:each="role : ${user.getRoles()}">
+                <a th:text="${role.getAuthority().replaceAll('ROLE_','')}">Roles</a>
+            </a>
+            <a href="/logout" class="float-right text-secondary"> Logout </a>
+        </div>
+        <!--        Кнопки-таблетки слева USER-->
+        <div class="col-sm-2" style="padding-left: 0px; padding-right: 0px">
+            <ul class="nav nav-tabs flex-column">
+                <li class="nav-pills">
+                    <!--                    Ставим маркер #user на кнопку.  -->
+                    <a class="nav-link active" data-toggle="tab" href="#user">User</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-10 height: 1200 px" style="height: 1000px; background: #F7F7F7">
+            <!--            Вкладка для юзера (без прав админа)-->
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="user">
+                    <div class="tabs p-2">
+                        <h1>User information-page</h1>
+                    </div>
+                    <div class="pt-2 tab-content">
+                        <div class="tab-pane fade show active" id="description">
+                            <div class="p-2 border">
+                                <h5 class="my-0 mx-2">About user</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <tr>
+                        <td>
+                            <form th:method="GET" th:object="${user}">
+                                <div class="p-3 bg-white border border-top-0">
+                                    <table class="usersTable table table-striped bg-white">
+                                        <thead>
+                                        <tr class="b">
+                                            <th>ID</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Age</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="${user.getId()}">User ID</td>
+                                            <td th:text="${user.getUsername()}">First Name</td>
+                                            <td th:text="${user.getLastName()}">Last Name</td>
+                                            <td th:text="${user.getAge()}">Age</td>
+                                            <td th:text="${user.getEmail()}">Email</td>
+                                            <td><a th:each="role : ${user.getRoles()}">
+                                                <a th:text="${role.getAuthority().replaceAll('ROLE_','')}">Roles</a>
+                                            </a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
